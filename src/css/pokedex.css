@@ -1,0 +1,15 @@
+.table{
+  background-color: azure;
+  margin-top: 30px;
+  width: 70% 
+}
+
+td{
+  text-align: center;
+  text-transform: capitalize;
+}
+
+th{
+  width: 15%;
+  text-align: center;
+}

@@ -1,0 +1,12 @@
+
+.card{
+   margin-top: 30px;
+   width: 70%;
+   background-color: azure;
+}
+
+.card-header{
+  text-transform: capitalize;
+  background-color: rgb(56, 56, 65);
+  color: aliceblue;
+}
