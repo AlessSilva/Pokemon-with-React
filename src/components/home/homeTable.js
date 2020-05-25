@@ -1,7 +1,7 @@
 import React from 'react';
 import TableRow from './tableRow';
 
-function HomeTable({ pokemons, zones }) {
+function HomeTable({ pokemons, zones }) { 
 
   function createRows() {
     if (pokemons) {
@@ -25,7 +25,7 @@ function HomeTable({ pokemons, zones }) {
           <tr>
             <th>Name</th>
             <th></th>
-            <th>Zone Battle</th>
+            <th>Battle Zone</th>
             <th></th>
           </tr>
         </thead>

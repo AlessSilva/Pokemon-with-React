@@ -25,7 +25,7 @@ function Navbar(){
                 <li><Link to={'/'} className='nav-link'>Home</Link></li>
                 <li><Link to={'/pokedex'} className='nav-link'>The Pokédex</Link></li>
                 <li><Link to={'/mypokemons'} className='nav-link'>My Pokémons</Link></li>
-                <li><Link to={'/pokemonbattle'} className='nav-link'>Pokémon Battle</Link></li>
+                <li><Link to={'/gymleader'} className='nav-link'>Gym Leader Battle</Link></li>
               </ul>
             </div>
 

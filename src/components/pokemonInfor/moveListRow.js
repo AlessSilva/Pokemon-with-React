@@ -7,7 +7,7 @@ function MoveListRow({ move }) {
       <h6
         style={{textTransform: 'capitalize', fontSize: 12, color: '#c42141' }}
       >
-        {move} <img src={iconAttack} alt="icon attack" width="20"></img>
+        {move} <img src={iconAttack} alt="icon attack" width="20"/>
       </h6>
     </li>
   );

@@ -7,20 +7,22 @@ import PokedexIconType from './iconType';
 
 function InforType({ idPokemon }) {
   const [types, setTypes] = useState([]);
-  const URLPokemon = `${helper.URLPokemon}${idPokemon}`;
 
   useEffect(() => {
-    apiPokemon
-      .get(URLPokemon)
-      .then((result) => {
-        setTypes(
-          result.data.types.map((element, index) => {
-            return element.type.name;
-          })
-        );
-      })
-      .catch();
-  }, [URLPokemon]);
+    if (idPokemon) {
+      const URLPokemon = `${helper.URLPokemon}${idPokemon}`;
+      apiPokemon
+        .get(URLPokemon)
+        .then((result) => {
+          setTypes(
+            result.data.types.map((element, index) => {
+              return element.type.name;
+            })
+          );
+        })
+        .catch();
+    }
+  }, [idPokemon]);
 
   function createIconType() {
     if (types) {

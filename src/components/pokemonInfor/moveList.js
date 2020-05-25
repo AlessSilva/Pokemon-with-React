@@ -8,7 +8,7 @@ function MoveList({ moves }) {
     if (moves) {
       let movies_search = search
         ? moves.filter((move) => move.includes(search))
-        : moves;
+        : moves; 
 
       return movies_search.map((move, index) => {
         return <MoveListRow key={index} move={move} />;
@@ -17,7 +17,6 @@ function MoveList({ moves }) {
   }
 
   function handlerSearch(event) {
-    //console.log(event.target.value.toLowerCase());
     setSearch(event.target.value.replace(' ', '').toUpperCase());
   }
 

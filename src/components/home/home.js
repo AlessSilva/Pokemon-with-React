@@ -10,24 +10,30 @@ function Home() {
 
   async function getRandonsPokemons() {
     const zonesNames = [
-      'base',
       'beach',
       'cave',
-      'cosmos',
-      'eden',
+      'cemetery',
+      'desert',
       'forest',
-      'fullMoon',
-      'ghostly',
-      'mountains',
+      'lava',
+      'mountain',
+      'plains',
+      'sea',
+      'snow',
+      'underwater',
+      'urban',
       'volcano',
-      'winter',
     ];
 
     const aux_pokemons = [];
     const aux_zones = [];
 
     for (let index = 0; index < 20; index++) {
-      const id = Math.floor(Math.random() * 600 + 1);
+      const id = Math.floor(Math.random() * 400 + 1);
+
+      const extra_life = Math.floor(Math.random() * 150 + 1);
+      const extra_weight = Math.floor(Math.random() * 20 + 1);
+      const extra_height = Math.floor(Math.random() * 20 + 1);
 
       const zoneID = Math.floor(Math.random() * 11);
       aux_zones.push(zonesNames[zoneID]);
@@ -36,14 +42,33 @@ function Home() {
 
       const result = await apiPokemon.get(URLPokemon);
 
+      let types = result.data.types.map((element, index) => {
+        return element.type.name;
+      });
+
+      let moves = result.data.moves.map((element, index) => {
+        return element.move.name.toUpperCase();
+      });
+
+      let randomMoves = [];
+
+      while (randomMoves.length <= 4) {
+        const id_move = Math.floor(Math.random() * moves.length);
+        randomMoves = [...randomMoves, moves[id_move]];
+      }
+
       //console.log(result.data.name);
       //console.log(zonesNames[zoneID]);
 
       aux_pokemons.push({
         id: id,
         name: result.data.name,
-        life: result.data.base_experience,
-        moves: [],
+        base: result.data.base_experience + extra_life,
+        extra: 0,
+        weight: result.data.weight + extra_weight,
+        height: result.data.height + extra_height,
+        moves: moves,
+        types: types,
       });
     }
     return { pokemons: aux_pokemons, zones: aux_zones };

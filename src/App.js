@@ -6,6 +6,11 @@ import Navbar from './components/navbar';
 import Pokedex from './components/pokedex/pokedex';
 import PokedexInfo from './components/pokemonInfor/pokemonInfor';
 import Home from './components/home/home';
+import MyPokemons from './components/mypokemons/mypokemons';
+import MyPokemonCardInfor from './components/mypokemons/myPokemonsInfor';
+import HomeCapture from './components/home/homeCapture';
+import GymLeadersTable from './components/gymLeader/gymLeadersTable';
+import GymLeaderBattle from './components/gymLeader/gymLeaderBattle';
 
 function App() {
   function getStarterPokemons() {
@@ -14,15 +19,22 @@ function App() {
         //Bulbasaur
         id: 1,
         name: 'bulbasaur',
-        life: 70,
-        types: ['poison','grass'],
+        nick: 'verdinho',
+        base: 77,
+        extra:0,
+        weight: 89,
+        height: 9,
+        types: ['poison', 'grass'],
         moves: ['razor-wind', 'swords-dance', 'grassy-terrain', 'magical-leaf'],
       },
       {
         //Charmander
         id: 4,
         name: 'charmander',
-        life: 70,
+        base: 77,
+        extra:0,
+        weight: 90,
+        height: 10,
         types: ['fire'],
         moves: ['mega-kick', 'fire-punch', 'frustation', 'ancient-power'],
       },
@@ -30,7 +42,10 @@ function App() {
         //Squirtle
         id: 7,
         name: 'squirtle',
-        life: 70,
+        base: 70,
+        extra:0,
+        weight: 92,
+        height: 5,
         types: ['water'],
         moves: ['water-pledge ', 'ice-punch', 'double-edge', 'bubble-beam'],
       },
@@ -39,7 +54,10 @@ function App() {
     const pikachu = {
       id: 25,
       name: 'pikachu',
-      life: 112,
+      base: 112,
+      extra:0,
+      weight: 60,
+      height: 4,
       types: ['electric'],
       moves: ['thunder-punch', 'submission', 'thunder', 'agility'],
     };
@@ -50,6 +68,7 @@ function App() {
   sessionStorage.setItem('pokedexURL', pokedexURL);
 
   const myPokemons = getStarterPokemons();
+  console.log(myPokemons);
   sessionStorage.setItem('myPokemons', JSON.stringify(myPokemons));
 
   return (
@@ -61,8 +80,11 @@ function App() {
           <Route exact path="/pokedex" component={Pokedex} />
           <Route exact path="/pokedex/:id" component={PokedexInfo} />
           <Route exact path="/" component={Home} />
-          <Route exact path="/mypokemons" />
-          <Route exact path="/pokemonbattle" />
+          <Route exact path="/mypokemons" component={MyPokemons} />
+          <Route exact path="/mypokemon/:id" component={MyPokemonCardInfor} />
+          <Route exact path="/home/capture/:id/:zoneID" component={HomeCapture} />
+          <Route exact path="/gymleader" component={GymLeadersTable} />
+          <Route exact path="/gymleader/:number" component={GymLeaderBattle}/>
         </Switch>
       </BrowserRouter>
     </>

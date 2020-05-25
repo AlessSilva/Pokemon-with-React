@@ -1,25 +1,30 @@
-import base from './base.png';
-import beach from './beach.png';
-import cave from './cave.png';
-import cosmos from './cosmos.png';
-import eden from './eden.png';
-import forest from './forest.png';
-import fullMoon from './full_moon.png';
-import ghostly from './ghostly.png';
-import mountains from './mountains.png';
-import volcano from './volcano.png';
-import winter from './winter.png';
+import beach from './zone_beach.png';
+import cave from './zone_cave.png';
+import cemetery from './zone_cemetery.png';
+import desert from './zone_desert.png';
+import forest from './zone_forest.png';
+import lava from './zone_lava.png';
+import mountain from './zone_mountain.png';
+import plains from './zone_plains.png';
+import sea from './zone_sea.png';
+import snow from './zone_snow.png';
+import underwater from './zone_underwater.png';
+import urban from './zone_urban.png';
+import volcano from './zone_volcano.png';
+
 
 export default {
-  base,
   beach,
   cave,
+  cemetery,
+  desert,
   forest,
-  ghostly,
-  mountains,
-  volcano,
-  winter,
-  cosmos,
-  eden,
-  fullMoon
+  lava,
+  mountain,
+  plains,
+  sea,
+  snow,
+  underwater,
+  urban,
+  volcano
 };
