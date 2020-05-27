@@ -11,6 +11,8 @@ function Arena({
   myPokemon,
   myEnemy,
   message,
+  attacking,
+  MySituation,
   zoneID,
   lifeMyPokemon,
   lifeMyEnemy,
@@ -42,7 +44,7 @@ function Arena({
     if (!arenaBattle) {
       return (
         <div className="col-12 text-center">
-          {lifeMyEnemy <= 0 && (
+          {MySituation === 'winner' && (
             <Link
               onClick={capturePokemon}
               to="/mypokemons"
@@ -54,21 +56,57 @@ function Arena({
               <img src={iconCapture} alt="icon attack" width="15" />
             </Link>
           )}
+          {MySituation === 'loser' && (
+            <Link
+              onClick={capturePokemon}
+              to="/"
+              type="button"
+              className="btn btn-primary"
+              style={{ margin: 5 }}
+            >
+              Explore again!!!
+            </Link>
+          )}
         </div>
       );
     }
+    return (
+      <div className="col-12 text-center">
+          {MySituation === 'winner' && (
+            <Link
+              to="/gymleader"
+              type="button"
+              className="btn btn-primary"
+              style={{ margin: 5 }}
+            >
+              Receive the Badge !!!
+              <img src={iconCapture} alt="icon attack" width="15" />
+            </Link>
+          )}
+          {MySituation === 'loser' && (
+            <Link
+              to="/gymleader"
+              type="button"
+              className="btn btn-primary"
+              style={{ margin: 5 }}
+            >
+              Back to the Challenges.
+            </Link>
+          )}
+        </div>
+    );
   }
 
   function capturePokemon() {
     const myPokemons = JSON.parse(sessionStorage.getItem('myPokemons'));
-    if(myPokemons.length<=5){
+    if (myPokemons.length <= 5) {
       sessionStorage.setItem(
         'myPokemons',
         JSON.stringify([...myPokemons, myEnemy])
       );
       return;
     }
-    alert("Pokéballs are not enough!!! Limit of 6 Pokémons.");
+    alert('Pokéballs are not enough!!! Limit of 6 Pokémons.');
   }
 
   return (
@@ -119,6 +157,7 @@ function Arena({
             type="button"
             className="btn btn-danger"
             style={{ margin: 5 }}
+            disabled={attacking || lifeMyPokemon <= 0}
           >
             Attack <img src={iconAttack} alt="icon attack" width="15" />
           </button>

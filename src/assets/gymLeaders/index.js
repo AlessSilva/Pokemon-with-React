@@ -14,6 +14,8 @@ import gym_leader13 from './gym_leader13.png';
 import gym_leader14 from './gym_leader14.png';
 import gym_leader15 from './gym_leader15.png';
 import gym_leader16 from './gym_leader16.png';
+import gym_leader17 from './gym_leader17.png';
+import gym_leader18 from './gym_leader18.png';
 
 export default {
   gym_leader1,
@@ -32,4 +34,6 @@ export default {
   gym_leader14,
   gym_leader15,
   gym_leader16,
+  gym_leader17,
+  gym_leader18
 }

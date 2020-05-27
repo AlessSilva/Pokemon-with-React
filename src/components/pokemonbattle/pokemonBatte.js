@@ -5,14 +5,17 @@ import Arena from './arena';
 import ExtraZoneStrength from './extraZoneStrength';
 import PokemonStrengths from './pokemonStrengths';
 
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
 function PokemonBattle({ enemies, zoneID, arenaBattle }) {
   const myPokemons = getPokemonsWithEZS();
   const [lifeMyPokemons, setLifeMyPokemons] = useState([]);
   const [lifeMyEnemies, setLifeMyEnemies] = useState([]);
   const [chosen, setChosen] = useState(0);
   const [enemy, setEnemy] = useState(0);
-  let aux_message = '';
   const [message, setMessage] = useState(`${enemies[enemy].name} show up`);
+  const [attacking, setAttacking] = useState(false);
+  const [MySituation, setMySituation] = useState('normal');
 
   useEffect(() => {
     if (lifeMyPokemons.length === 0) {
@@ -49,10 +52,12 @@ function PokemonBattle({ enemies, zoneID, arenaBattle }) {
   }
 
   function calculatorEZS(pokemon) {
-    let extra = 0;
+    let extra = -100;
     for (let index = 0; index < pokemon.types.length; index++) {
       const type = pokemon.types[index];
-      extra = extra + ExtraZoneStrength[zoneID][type];
+      if (ExtraZoneStrength[zoneID][type] > extra) {
+        extra = ExtraZoneStrength[zoneID][type];
+      }
     }
     return extra;
   }
@@ -62,22 +67,34 @@ function PokemonBattle({ enemies, zoneID, arenaBattle }) {
   }
 
   function showMyPokemons() {
-    return myPokemons.map((pokemon, index) => {
-      return (
-        <PokemonShow
-          key={index}
-          index={index}
-          idPokemon={pokemon.id}
-          enemy={false}
-          handlerOnClick={handlerChooseNewPokemon}
-        />
-      );
-    });
+    if (myPokemons[chosen]) {
+      return myPokemons.map((pokemon, index) => {
+        return (
+          <PokemonShow
+            key={index}
+            index={index}
+            idPokemon={pokemon.id}
+            pokemon={myPokemons[index]}
+            lifePokemon={lifeMyPokemons[index]}
+            enemy={false}
+            handlerOnClick={handlerChooseNewPokemon}
+          />
+        );
+      });
+    }
   }
 
   function showEnemies() {
-    return enemies.map((enemy, index) => {
-      return <PokemonShow key={index} idPokemon={enemy.id} enemy={true} />;
+    return enemies.map((ene, index) => {
+      return (
+        <PokemonShow
+          key={index}
+          idPokemon={ene.id}
+          pokemon={enemies[index]}
+          lifePokemon={lifeMyEnemies[index]}
+          enemy={true}
+        />
+      );
     });
   }
 
@@ -94,6 +111,8 @@ function PokemonBattle({ enemies, zoneID, arenaBattle }) {
         iMyPokemon={chosen}
         iMyEnemy={enemy}
         message={message}
+        attacking={attacking}
+        MySituation={MySituation}
         zoneID={zoneID}
         handlerAttack={attack}
         arenaBattle={arenaBattle}
@@ -101,21 +120,37 @@ function PokemonBattle({ enemies, zoneID, arenaBattle }) {
     );
   }
 
-  function attack(halfMessage) {
+  async function attack(halfMessage) {
+    setAttacking(true);
+
     let damage =
       Math.floor(Math.random() * 5 + 5) +
       DamageByPokemonStrengths(false) +
       DamageByPokemonDimensions(false);
 
     let aux = [...lifeMyEnemies];
-    aux[enemy] = aux[enemy] - damage < 0 ? 0 : aux[enemy] - damage;
+    aux[enemy] = aux[enemy] - damage <= 0 ? 0 : aux[enemy] - damage;
 
     setMessage(`${halfMessage} || Damage to ${enemies[enemy].name}: ${damage}`);
-
+    await delay(2000);
     setLifeMyEnemies(aux);
 
-    if (aux[enemy] === 0) {
+    if (aux[enemy] <= 0) {
       setMessage(`${enemies[enemy].name} fainted`);
+      await delay(2000);
+      if (netxEnemy() === -1) {
+        if (arenaBattle) {
+          setMessage(`Congratulations!!! You beat this Gym Leader!!!`);
+          setMySituation('winner');
+          return;
+        }
+        setMessage(`It's time to capture this pokémon!!!`);
+        setMySituation('winner');
+        return;
+      }
+      setEnemy(enemy + 1);
+      setMessage(`${enemies[enemy].name} show up`);
+      await delay(2000);
     } else {
       const randomMoveEnemy = Math.floor(
         Math.random() * enemies[enemy].moves.length
@@ -124,29 +159,54 @@ function PokemonBattle({ enemies, zoneID, arenaBattle }) {
 
       let damageEnemy =
         Math.floor(Math.random() * 5 + 5) +
-        DamageByPokemonStrengths(false) +
-        DamageByPokemonDimensions(false);
+        DamageByPokemonStrengths(true) +
+        DamageByPokemonDimensions(true);
 
       let aux2 = [...lifeMyPokemons];
-      aux2[chosen] = aux2[chosen] - 10 < damageEnemy ? 0 : aux2[chosen] - damageEnemy;
+      aux2[chosen] =
+        aux2[chosen] - damageEnemy <= 0 ? 0 : aux2[chosen] - damageEnemy;
 
       setMessage(
         `${enemies[enemy].name} used ${moveEnemy} || Damage to ${myPokemons[chosen].name}: ${damageEnemy}`
       );
-
+      await delay(2000);
       setLifeMyPokemons(aux2);
+      if (aux2[chosen] <= 0) {
+        setMessage(`${myPokemons[chosen].name} fainted`);
+        await delay(2000);
+      }
+      if (Loser(damageEnemy, chosen)) {
+        setMessage('You lose!!! Try next time...');
+        setMySituation('loser');
+        return;
+      }
     }
+    setAttacking(false);
   }
 
   function DamageByPokemonStrengths(IsEnemy) {
-    const [attacker, target] = IsEnemy ? [enemy, chosen] : [chosen, enemy];
-
-    for (let index1 = 0; index1 < myPokemons[attacker].types.length; index1++) {
-      const attackertype = myPokemons[attacker].types[index1];
-      for (let index2 = 0; index2 < enemies[target].types.length; index2++) {
-        const targettype = enemies[target].types[index2];
-        if (PokemonStrengths[attackertype].includes(targettype)) {
-          return Math.floor(Math.random() * 10);
+    if (!IsEnemy) {
+      for (let index1 = 0; index1 < myPokemons[chosen].types.length; index1++) {
+        const attackertype = myPokemons[chosen].types[index1];
+        for (let index2 = 0; index2 < enemies[enemy].types.length; index2++) {
+          const targettype = enemies[enemy].types[index2];
+          if (PokemonStrengths[attackertype].includes(targettype)) {
+            return 10 + Math.floor(Math.random() * 5);
+          }
+        }
+      }
+    } else {
+      for (let index1 = 0; index1 < enemies[enemy].types.length; index1++) {
+        const attackertype = enemies[enemy].types[index1];
+        for (
+          let index2 = 0;
+          index2 < myPokemons[chosen].types.length;
+          index2++
+        ) {
+          const targettype = myPokemons[chosen].types[index2];
+          if (PokemonStrengths[attackertype].includes(targettype)) {
+            return 10 + Math.floor(Math.random() * 5);
+          }
         }
       }
     }
@@ -154,21 +214,43 @@ function PokemonBattle({ enemies, zoneID, arenaBattle }) {
   }
 
   function DamageByPokemonDimensions(IsEnemy) {
-    const [attacker, target] = IsEnemy ? [enemy, chosen] : [chosen, enemy];
-
     let damage = 0;
-    if (myPokemons[attacker].weight > enemies[target].weight) {
-      damage = damage + Math.floor(Math.random() * 2);
+    if (!IsEnemy) {
+      if (myPokemons[chosen].weight > enemies[enemy].weight) {
+        damage = damage + 2 + Math.floor(Math.random() * 3);
+      }
+      if (myPokemons[chosen].height > enemies[enemy].height) {
+        damage = damage + 2 + Math.floor(Math.random() * 3);
+      }
+    } else {
+      if (myPokemons[chosen].weight < enemies[enemy].weight) {
+        damage = damage + 2 + Math.floor(Math.random() * 3);
+      }
+      if (myPokemons[chosen].height < enemies[enemy].height) {
+        damage = damage + 2 + Math.floor(Math.random() * 3);
+      }
     }
-    if (myPokemons[attacker].height > enemies[target].height) {
-      damage = damage + Math.floor(Math.random() * 3);
-    }
-
     return damage;
   }
 
+  function Loser(damage, i) {
+    for (let index = 0; index < lifeMyPokemons.length; index++) {
+      if (lifeMyPokemons[index] - (i === index && damage) > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function netxEnemy() {
+    if (enemy === enemies.length - 1) {
+      return -1;
+    }
+    return enemy + 1;
+  }
+
   return (
-    <div style={{ marginTop: '30px', width: '60%' }} className="container">
+    <div style={{ marginTop: '30px', width: '70%' }} className="container">
       <div className="row">
         <div className="col-2" style={{ padding: '0.5em' }}>
           {showMyPokemons()}

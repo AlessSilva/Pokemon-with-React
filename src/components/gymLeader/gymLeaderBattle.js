@@ -7,7 +7,7 @@ function GymLeaderBattle() {
   const { number } = useParams();
   const leader = `gymleader${number}`;
   const enemies = gymleaderPokemons[leader];
-  const zoneID = 'beach';
+  const zoneID = 'gym';
   return <PokemonBattle enemies={enemies} zoneID={zoneID} arenaBattle={true} />;
 }
 

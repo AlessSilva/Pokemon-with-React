@@ -4,6 +4,10 @@ import apiPokemon from '../../services/apiPokemon';
 import helper from '../../helpers/URLUtil';
 import HomeTable from './homeTable';
 
+function between(x, v1, v2) {
+  return x >= v1 && x <= v2;
+}
+
 function Home() {
   const [pokemons, setPokemons] = useState([]);
   const [zones, setZones] = useState([]);
@@ -11,29 +15,54 @@ function Home() {
   async function getRandonsPokemons() {
     const zonesNames = [
       'beach',
+      'beach2',
       'cave',
+      'cave2',
       'cemetery',
       'desert',
+      'desert2',
       'forest',
+      'forest2',
       'lava',
+      'mansion',
+      'misty',
       'mountain',
+      'mountain2',
       'plains',
+      'plains2',
+      'plains3',
+      'sanctuary',
       'sea',
+      'sea2',
       'snow',
+      'space',
       'underwater',
       'urban',
+      'urban2',
       'volcano',
     ];
 
     const aux_pokemons = [];
     const aux_zones = [];
 
-    for (let index = 0; index < 20; index++) {
-      const id = Math.floor(Math.random() * 400 + 1);
+    //ban = [144...151, 243 ... 251, 377 ... 386,480...493,633...649];
 
-      const extra_life = Math.floor(Math.random() * 150 + 1);
-      const extra_weight = Math.floor(Math.random() * 20 + 1);
-      const extra_height = Math.floor(Math.random() * 20 + 1);
+    for (let index = 0; index < 20; index++) {
+      const id = Math.floor(Math.random() * 649 + 1);
+
+      if (
+        between(id, 144, 151) ||
+        between(id, 243, 251) ||
+        between(id, 377, 386) ||
+        between(id, 480, 493) ||
+        between(id, 633, 649)
+      ) {
+        continue;
+      }
+
+      const extra_life = Math.floor(Math.random() * 50);
+      const extra_weight = Math.floor(Math.random() * 10);
+      const extra_height = Math.floor(Math.random() * 10);
 
       const zoneID = Math.floor(Math.random() * 11);
       aux_zones.push(zonesNames[zoneID]);
